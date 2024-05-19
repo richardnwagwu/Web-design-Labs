@@ -1,0 +1,46 @@
+const fs = require('fs');
+
+// Load existing data from weather-data.json if it exists, or initialize an empty object
+let weatherData = {};
+if (fs.existsSync('weather-data.json')) {
+    const data = fs.readFileSync('weather-data.json');
+    weatherData = JSON.parse(data);
+}
+
+// Define the number of rows to add
+const numRowsToAdd = 30;
+
+// Define the initial date (2024-02-07)
+let currentDate = new Date('2024-02-07');
+
+// Define the end date (2024-03-07)
+const endDate = new Date('2024-03-07');
+
+// Define the city name
+const city = 'CityA';
+
+// Loop to add 30 rows of data
+while (currentDate <= endDate && numRowsToAdd > 0) {
+    // Format the date as YYYY-MM-DD
+    const dateKey = currentDate.toISOString().split('T')[0];
+
+    // Add data for the current date
+    weatherData[city][dateKey] = {
+        "Temperature": Math.random() * 30 + 15,
+        "Humidity": Math.floor(Math.random() * 100),
+        "Weather": Math.random() > 0.5 ? "Cloudy" : "Rainy",
+        "Wind": {
+            "Speed": Math.random() * 50 + 10,
+            "Direction": Math.random() > 0.5 ? "North" : "West"
+        }
+    };
+
+    // Move to the next day
+    currentDate.setDate(currentDate.getDate() + 1);
+    numRowsToAdd--;
+}
+
+// Write the updated data back to the file
+fs.writeFileSync('weather-data.json', JSON.stringify(weatherData, null, 2));
+
+console.log('Data added to weather-data.json');
